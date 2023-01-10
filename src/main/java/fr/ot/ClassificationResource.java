@@ -21,7 +21,7 @@ public class ClassificationResource {
     ClassificationRepository classificationRepository;
 
     @GET
-    public Response getAll(){
+    public Response getAllClassifications(){
         List<ClassificationEntity> classifications = classificationRepository.listAll();
         return Response.ok(classifications).build();
     }

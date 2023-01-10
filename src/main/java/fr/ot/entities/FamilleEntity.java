@@ -18,5 +18,5 @@ public class FamilleEntity {
     private String nom;
 
     @Column (name = "id_classification")
-    private String id_classification;
+    private Integer id_classification;
 }
