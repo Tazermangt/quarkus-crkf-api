@@ -1,10 +1,10 @@
 package fr.ot.ressource;
 
 import fr.ot.entities.ClassificationEntity;
-import fr.ot.entities.VilleEntity;
+import fr.ot.entities.EcoleEntity;
 import fr.ot.hateoas.HateOas;
 import fr.ot.repository.ClassificationRepository;
-import fr.ot.repository.VilleRepository;
+import fr.ot.repository.EcoleRepository;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -17,24 +17,24 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path("/villes")
-@Tag(name = "Villes")
+@Path("/ecoles")
+@Tag(name = "Ecoles")
 @Produces(MediaType.APPLICATION_JSON)
-public class VilleResource {
+public class EcoleResource {
 
     @Inject
-    VilleRepository villeRepository;
+    EcoleRepository ecoleRepository;
 
     @GET
-    public Response getAllVilles(@Context UriInfo uriInfo) {
-        List<VilleEntity> villes = villeRepository.listAll();
-        if (!villes.isEmpty()) {
-            for (VilleEntity villeEntity : villes) {
+    public Response getAllEcoles(@Context UriInfo uriInfo) {
+        List<EcoleEntity> ecoles = ecoleRepository.listAll();
+        if (!ecoles.isEmpty()) {
+            for (EcoleEntity ecoleEntity : ecoles) {
                 String uriBase = uriInfo.getRequestUriBuilder().build().toString();
-                villeEntity.addLink("all", uriBase);
-                villeEntity.addLink("self", uriBase + "/" + villeEntity.getIdVille());
+                ecoleEntity.addLink("all", uriBase);
+                ecoleEntity.addLink("self", uriBase + "/" + ecoleEntity.getIdEcole());
             }
-            return Response.ok(villes).build();
+            return Response.ok(ecoles).build();
         } else {
             return Response.noContent().build();
         }
@@ -43,12 +43,12 @@ public class VilleResource {
     @GET
     @Path("{id}")
     public Response getById(@PathParam("id") Integer id, @Context UriInfo uriInfo) {
-        VilleEntity ville = villeRepository.findById(id);
-        if (ville != null) {
+        EcoleEntity ecole = ecoleRepository.findById(id);
+        if (ecole != null) {
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
-            ville.addLink("all", uriBase.replace("/" + id, ""));
-            ville.addLink("self", uriBase);
-            return Response.ok(ville).build();
+            ecole.addLink("all", uriBase.replace("/" + id, ""));
+            ecole.addLink("self", uriBase);
+            return Response.ok(ecole).build();
         } else {
             return Response.noContent().build();
         }
@@ -57,13 +57,13 @@ public class VilleResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response create(VilleEntity ville, @Context UriInfo uriInfo) {
-        if (ville != null) {
-            villeRepository.persist(ville);
+    public Response create(EcoleEntity ecole, @Context UriInfo uriInfo) {
+        if (ecole != null) {
+            ecoleRepository.persist(ecole);
             HateOas hateOas = new HateOas();
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
             hateOas.addLink("all", uriBase);
-            hateOas.addLink("self", uriBase + "/" + ville.getIdVille());
+            hateOas.addLink("self", uriBase + "/" + ecole.getIdEcole());
             return Response.ok(hateOas).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -73,14 +73,13 @@ public class VilleResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response update(VilleEntity ville, @Context UriInfo uriInfo) {
-        if (ville != null) {
-            villeRepository.update("ville = ?1, longitude = ?2, latitude = ?3, id_departement = ?4 where id_ville = ?5",
-                    ville.getVille(), ville.getLongitude(), ville.getLatitude(), ville.getIdDepartement(), ville.getIdVille());
+    public Response update(EcoleEntity ecole, @Context UriInfo uriInfo) {
+        if (ecole != null) {
+            ecoleRepository.update("nom = ?1, id_adresse = ?2 where id_ecole = ?3", ecole.getNom(), ecole.getIdAdresse(), ecole.getIdEcole());
             HateOas hateOas = new HateOas();
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
             hateOas.addLink("all", uriBase);
-            hateOas.addLink("self", uriBase + "/" + ville.getIdVille());
+            hateOas.addLink("self", uriBase + "/" + ecole.getIdEcole());
             return Response.ok(hateOas).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
@@ -93,7 +92,7 @@ public class VilleResource {
     @Transactional
     public Response delete(@PathParam("id") Integer id, @Context UriInfo uriInfo) {
         if (id != null) {
-            villeRepository.delete("id_ville = ?1", id);
+            ecoleRepository.delete("id_ecole = ?1", id);
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
             HateOas hateOas = new HateOas();
             hateOas.addLink("all", uriBase.replace("/" + id, ""));
@@ -101,6 +100,5 @@ public class VilleResource {
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-
     }
 }
