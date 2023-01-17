@@ -1,7 +1,9 @@
-package fr.ot;
+package fr.ot.ressource;
 
 import fr.ot.entities.FamilleEntity;
+import fr.ot.entities.InstrumentEntity;
 import fr.ot.repository.FamilleRepository;
+import fr.ot.repository.InstrumentRepository;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -11,37 +13,36 @@ import javax.ws.rs.*;
 import javax.ws.rs.core.Context;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
-import java.util.List;
 import javax.ws.rs.core.UriInfo;
+import java.util.List;
 
-@Path("/familles")
-@Tag(name = "Familles")
-@Produces (MediaType.APPLICATION_JSON)
-public class FamilleResource {
-
+@Path("/instruments")
+@Tag(name = "Instruments")
+@Produces(MediaType.APPLICATION_JSON)
+public class InstrumentRessource {
     @Inject
-    FamilleRepository familleRepository;
+    InstrumentRepository instrumentRepository;
 
     @GET
     public Response getAll(@Context UriInfo uriInfo){
-        List<FamilleEntity> familles = familleRepository.listAll();
-        for(FamilleEntity famille : familles){
+        List<InstrumentEntity> instruments = instrumentRepository.listAll();
+        for(InstrumentEntity instrument : instruments){
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
-            famille.addLink("all", uriBase);
-            famille.addLink("self", uriBase + "/" + famille.getIdFamille());
+            instrument.addLink("all", uriBase);
+            instrument.addLink("self", uriBase + "/" + instrument.getIdInstrument());
         }
-        return Response.ok(familles).build();
+        return Response.ok(instruments).build();
     }
 
     @GET
     @Path("{id}")
     public Response getById(@PathParam("id") Integer id, @Context UriInfo uriInfo){
         if(id != null){
-            FamilleEntity famille = familleRepository.findById(id);
+            InstrumentEntity instrument = instrumentRepository.findById(id);
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
-            famille.addLink("all", uriBase);
-            famille.addLink("self", uriBase + "/" + famille.getIdFamille());
-            return Response.ok(famille).build();
+            instrument.addLink("all", uriBase);
+            instrument.addLink("self", uriBase + "/" + instrument.getIdInstrument());
+            return Response.ok(instrument).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -49,10 +50,9 @@ public class FamilleResource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response create(FamilleEntity famille, @Context UriInfo uriInfo){
-        if(famille != null){
-            System.out.println(famille);
-            familleRepository.persist(famille);
+    public Response create(InstrumentEntity instrument, @Context UriInfo uriInfo){
+        if(instrument != null){
+            instrumentRepository.persist(instrument);
             return Response.status(204).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -61,9 +61,9 @@ public class FamilleResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response update(FamilleEntity famille){
-        if(famille != null){
-            familleRepository.update("Famille = ?1, id_classification = ?2 where id_famille=?3", famille.getFamille(), famille.getIdClassification(),famille.getIdFamille());
+    public Response update(InstrumentEntity instrument){
+        if(instrument != null){
+            instrumentRepository.update("Nom = ?1 where id_instrument=?2", instrument.getNom(), instrument.getIdInstrument());
             return Response.status(204).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -74,7 +74,7 @@ public class FamilleResource {
     @Transactional
     public Response delete(@PathParam("id") Integer id){
         if(id != null){
-            familleRepository.delete("id_famille = ?1", id);
+            instrumentRepository.delete("id_instrument = ?1", id);
             return Response.status(204).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
