@@ -1,4 +1,4 @@
-package fr.ot;
+package fr.ot.ressource;
 
 import fr.ot.entities.ClassificationEntity;
 import fr.ot.hateoas.HateOas;
