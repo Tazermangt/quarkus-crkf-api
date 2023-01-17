@@ -63,7 +63,7 @@ public class FamilleResource {
     @Transactional
     public Response update(FamilleEntity famille){
         if(famille != null){
-            familleRepository.update("Famille = ?1 id_classification = ?2 where id_famille=?3", famille.getFamille(), famille.getIdClassification(),famille.getIdFamille());
+            familleRepository.update("Famille = ?1, id_classification = ?2 where id_famille=?3", famille.getFamille(), famille.getIdClassification(),famille.getIdFamille());
             return Response.status(204).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
