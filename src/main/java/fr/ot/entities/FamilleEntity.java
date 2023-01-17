@@ -1,22 +1,23 @@
 package fr.ot.entities;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import fr.ot.hateoas.HateOas;
 import lombok.Data;
 
 import javax.persistence.*;
-
-@Entity
 @Data
+@Entity
 @Table(name = "Famille", schema = "dbo", catalog = "CRKF")
-public class FamilleEntity {
-
-    @Id
+@JsonPropertyOrder({"idFamille", "famille", "idClassification"})
+public class FamilleEntity extends HateOas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Id
     @Column(name = "id_famille")
-    private Integer id;
-
-    @Column (name = "Famille")
-    private String nom;
-
-    @Column (name = "id_classification")
-    private Integer id_classification;
+    private int idFamille;
+    @Basic
+    @Column(name = "Famille")
+    private String famille;
+    @Basic
+    @Column(name = "id_classification")
+    private int idClassification;
 }
