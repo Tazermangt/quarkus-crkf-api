@@ -28,7 +28,7 @@
     </QsMavenRunConfiguration>
     <method v="2">
       <option name="Make" enabled="true" />
-      <option name="LaunchBrowser.Before.Run" url="http://localhost:8080/api/" />
+      <option name="LaunchBrowser.Before.Run" browser="9ba0ee17-0bd6-41b6-9655-926b958d7d4b" url="http://localhost:8080/api/" />
     </method>
   </configuration>
 </component>

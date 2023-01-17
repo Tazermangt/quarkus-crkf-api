@@ -1,5 +1,7 @@
 package fr.ot.entities;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import fr.ot.hateoas.HateOas;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -10,7 +12,8 @@ import java.util.Objects;
 @Setter
 @Entity
 @Table(name = "Classification", schema = "dbo", catalog = "CRKF")
-public class ClassificationEntity {
+@JsonPropertyOrder({"idClassification", "classification"})
+public class ClassificationEntity extends HateOas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id_classification")
