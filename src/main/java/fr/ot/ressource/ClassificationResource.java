@@ -61,7 +61,7 @@ public class ClassificationResource {
             HateOas hateOas = new HateOas();
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
             hateOas.addLink("all", uriBase);
-            hateOas.addLink("self", uriBase.replace("/" + classification.getIdClassification(), ""));
+            hateOas.addLink("self", uriBase + "/" + classification.getIdClassification());
             return Response.ok(hateOas).build();
         } else {
             return Response.status(Response.Status.BAD_REQUEST).build();
