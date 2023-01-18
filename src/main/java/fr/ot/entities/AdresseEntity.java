@@ -1,5 +1,7 @@
 package fr.ot.entities;
 
+import com.fasterxml.jackson.annotation.JsonPropertyOrder;
+import fr.ot.hateoas.HateOas;
 import lombok.Data;
 
 import javax.persistence.*;
@@ -7,7 +9,8 @@ import javax.persistence.*;
 @Data
 @Entity
 @Table(name = "Adresse", schema = "dbo", catalog = "CRKF")
-public class AdresseEntity {
+@JsonPropertyOrder({"idAdresse", "adresse", "idVille"})
+public class AdresseEntity extends HateOas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Id
     @Column(name = "id_adresse")

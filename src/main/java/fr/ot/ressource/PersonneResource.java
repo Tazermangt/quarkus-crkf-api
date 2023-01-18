@@ -1,10 +1,10 @@
 package fr.ot.ressource;
 
-import fr.ot.entities.FamilleEntity;
-import fr.ot.entities.InstrumentEntity;
+import fr.ot.entities.AdresseEntity;
+import fr.ot.entities.PersonneEntity;
 import fr.ot.hateoas.HateOas;
-import fr.ot.repository.FamilleRepository;
-import fr.ot.repository.InstrumentRepository;
+import fr.ot.repository.AdresseRepository;
+import fr.ot.repository.PersonneRepository;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -17,33 +17,33 @@ import javax.ws.rs.core.Response;
 import javax.ws.rs.core.UriInfo;
 import java.util.List;
 
-@Path("/instruments")
-@Tag(name = "Instruments")
+@Path("/personnes")
+@Tag(name = "Personnes")
 @Produces(MediaType.APPLICATION_JSON)
-public class InstrumentRessource {
+public class PersonneResource {
     @Inject
-    InstrumentRepository instrumentRepository;
+    PersonneRepository personneRepository;
 
     @GET
     public Response getAll(@Context UriInfo uriInfo){
-        List<InstrumentEntity> instruments = instrumentRepository.listAll();
-        for(InstrumentEntity instrument : instruments){
+        List<PersonneEntity> personnes = personneRepository.listAll();
+        for(PersonneEntity personne : personnes){
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
-            instrument.addLink("all", uriBase);
-            instrument.addLink("self", uriBase + "/" + instrument.getIdInstrument());
+            personne.addLink("all", uriBase);
+            personne.addLink("self", uriBase + "/" + personne.getIdPersonne());
         }
-        return Response.ok(instruments).build();
+        return Response.ok(personnes).build();
     }
 
     @GET
     @Path("{id}")
     public Response getById(@PathParam("id") Integer id, @Context UriInfo uriInfo){
         if(id != null){
-            InstrumentEntity instrument = instrumentRepository.findById(id);
+            PersonneEntity personne = personneRepository.findById(id);
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
-            instrument.addLink("all", uriBase.replace("/" + instrument.getIdInstrument(), ""));
-            instrument.addLink("self", uriBase);
-            return Response.ok(instrument).build();
+            personne.addLink("all", uriBase.replace("/" + personne.getIdPersonne(), ""));
+            personne.addLink("self", uriBase);
+            return Response.ok(personne).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -51,13 +51,13 @@ public class InstrumentRessource {
     @POST
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response create(InstrumentEntity instrument, @Context UriInfo uriInfo){
-        if(instrument != null){
-            instrumentRepository.persist(instrument);
+    public Response create(PersonneEntity personne, @Context UriInfo uriInfo){
+        if(personne != null){
+            personneRepository.persist(personne);
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
             HateOas hateOas = new HateOas();
             hateOas.addLink("all", uriBase);
-            hateOas.addLink("self", uriBase + "/" + instrument.getIdInstrument());
+            hateOas.addLink("self", uriBase + "/" + personne.getIdPersonne());
             return Response.ok(hateOas).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -66,13 +66,13 @@ public class InstrumentRessource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response update(InstrumentEntity instrument, @Context UriInfo uriInfo){
-        if(instrument != null){
-            instrumentRepository.update("Nom = ?1 where id_instrument=?2", instrument.getNom(), instrument.getIdInstrument());
+    public Response update(PersonneEntity personne, @Context UriInfo uriInfo){
+        if(personne != null){
+            personneRepository.update("Nom = ?1, Prenom = ?2, VehiculeCV = ?3, id_adresse = ?4, id_ecole = ?5 where id_personne=?6", personne.getNom(), personne.getPrenom(), personne.getVehiculeCv(), personne.getIdAdresse(), personne.getIdEcole(),personne.getIdAdresse());
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
             HateOas hateOas = new HateOas();
             hateOas.addLink("all", uriBase);
-            hateOas.addLink("self", uriBase + "/" + instrument.getIdInstrument());
+            hateOas.addLink("self", uriBase + "/" + personne.getIdPersonne());
             return Response.ok(hateOas).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -83,7 +83,7 @@ public class InstrumentRessource {
     @Transactional
     public Response delete(@PathParam("id") Integer id, @Context UriInfo uriInfo){
         if(id != null){
-            instrumentRepository.delete("id_instrument = ?1", id);
+            personneRepository.delete("id_personne = ?1", id);
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
             HateOas hateOas = new HateOas();
             hateOas.addLink("all", uriBase.replace("/" + id, ""));
