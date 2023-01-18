@@ -2,9 +2,13 @@ package fr.ot.ressource;
 
 import fr.ot.entities.AdresseEntity;
 import fr.ot.entities.PersonneEntity;
+import fr.ot.entities.VilleEntity;
 import fr.ot.hateoas.HateOas;
 import fr.ot.repository.AdresseRepository;
+import fr.ot.repository.EcoleRepository;
 import fr.ot.repository.PersonneRepository;
+import fr.ot.repository.VilleRepository;
+import fr.ot.tools.EcoleTools;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -23,6 +27,12 @@ import java.util.List;
 public class PersonneResource {
     @Inject
     PersonneRepository personneRepository;
+    @Inject
+    EcoleRepository ecoleRepository;
+    @Inject
+    AdresseRepository adresseRepository;
+    @Inject
+    VilleRepository villeRepository;
 
     @GET
     public Response getAll(@Context UriInfo uriInfo){
@@ -53,6 +63,17 @@ public class PersonneResource {
     @Transactional
     public Response create(PersonneEntity personne, @Context UriInfo uriInfo){
         if(personne != null){
+            System.out.println("1");
+            AdresseEntity adresse = adresseRepository.findById(personne.getIdAdresse());
+            System.out.println("2");
+            VilleEntity ville = villeRepository.findById(adresse.getIdVille());
+            System.out.println("3");
+            int idClosestEcole = EcoleTools.getClosestFromCoordinates(ecoleRepository.listAll(), ville.getLatitude(), ville.getLongitude()).getIdEcole();
+            System.out.println("4");
+            System.out.println("idclosestecole");
+            System.out.println(idClosestEcole);
+            personne.setIdPersonne(idClosestEcole);
+
             personneRepository.persist(personne);
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
             HateOas hateOas = new HateOas();

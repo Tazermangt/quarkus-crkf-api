@@ -1,10 +1,14 @@
 package fr.ot.ressource;
 
-import fr.ot.entities.ClassificationEntity;
+import fr.ot.entities.AdresseEntity;
 import fr.ot.entities.EcoleEntity;
+import fr.ot.entities.PersonneEntity;
+import fr.ot.entities.VilleEntity;
 import fr.ot.hateoas.HateOas;
-import fr.ot.repository.ClassificationRepository;
+import fr.ot.repository.AdresseRepository;
 import fr.ot.repository.EcoleRepository;
+import fr.ot.repository.VilleRepository;
+import fr.ot.tools.EcoleTools;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
 
@@ -24,6 +28,10 @@ public class EcoleResource {
 
     @Inject
     EcoleRepository ecoleRepository;
+    @Inject
+    AdresseRepository adresseRepository;
+    @Inject
+    VilleRepository villeRepository;
 
     @GET
     public Response getAllEcoles(@Context UriInfo uriInfo) {
@@ -101,4 +109,17 @@ public class EcoleResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
     }
+
+    @GET
+    @Consumes(MediaType.APPLICATION_JSON)
+    @Path("/closest")
+    public Response getClosestFromCoordinates(@Context UriInfo uriInfo, PersonneEntity personne) {
+        AdresseEntity adresse = adresseRepository.findById(personne.getIdAdresse());
+        VilleEntity ville = villeRepository.findById(adresse.getIdVille());
+
+        EcoleTools.getClosestFromCoordinates(ecoleRepository.listAll(), ville.getLatitude(), ville.getLongitude());
+        return Response.ok().build();
+    }
+
+
 }

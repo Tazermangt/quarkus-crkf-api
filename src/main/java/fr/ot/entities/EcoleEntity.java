@@ -8,7 +8,7 @@ import javax.persistence.*;
 
 @Data
 @Entity
-@Table(name = "Ecole", schema = "dbo", catalog = "CRKF")
+@Table(name = "EcoleTools", schema = "dbo", catalog = "CRKF")
 @JsonPropertyOrder({"idEcole", "nom", "idAdresse"})
 public class EcoleEntity extends HateOas {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
