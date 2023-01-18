@@ -1,6 +1,7 @@
 package fr.ot.ressource;
 
 import fr.ot.entities.FamilleEntity;
+import fr.ot.hateoas.HateOas;
 import fr.ot.repository.FamilleRepository;
 import org.eclipse.microprofile.openapi.annotations.tags.Tag;
 import org.jboss.resteasy.annotations.jaxrs.PathParam;
@@ -39,8 +40,8 @@ public class FamilleResource {
         if(id != null){
             FamilleEntity famille = familleRepository.findById(id);
             String uriBase = uriInfo.getRequestUriBuilder().build().toString();
-            famille.addLink("all", uriBase);
-            famille.addLink("self", uriBase + "/" + famille.getIdFamille());
+            famille.addLink("all", uriBase.replace("/" + famille.getIdFamille(), ""));
+            famille.addLink("self", uriBase);
             return Response.ok(famille).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
@@ -52,7 +53,11 @@ public class FamilleResource {
     public Response create(FamilleEntity famille, @Context UriInfo uriInfo){
         if(famille != null){
             familleRepository.persist(famille);
-            return Response.status(204).build();
+            String uriBase = uriInfo.getRequestUriBuilder().build().toString();
+            HateOas hateOas = new HateOas();
+            hateOas.addLink("all", uriBase);
+            hateOas.addLink("self", uriBase + "/" + famille.getIdFamille());
+            return Response.ok(hateOas).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -60,10 +65,14 @@ public class FamilleResource {
     @PUT
     @Consumes(MediaType.APPLICATION_JSON)
     @Transactional
-    public Response update(FamilleEntity famille){
+    public Response update(FamilleEntity famille, @Context UriInfo uriInfo){
         if(famille != null){
             familleRepository.update("Famille = ?1, id_classification = ?2 where id_famille=?3", famille.getFamille(), famille.getIdClassification(),famille.getIdFamille());
-            return Response.status(204).build();
+            String uriBase = uriInfo.getRequestUriBuilder().build().toString();
+            HateOas hateOas = new HateOas();
+            hateOas.addLink("all", uriBase);
+            hateOas.addLink("self", uriBase + "/" + famille.getIdFamille());
+            return Response.ok(hateOas).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
@@ -71,10 +80,14 @@ public class FamilleResource {
     @DELETE
     @Path("{id}")
     @Transactional
-    public Response delete(@PathParam("id") Integer id){
+    public Response delete(@PathParam("id") Integer id, @Context UriInfo uriInfo){
         if(id != null){
             familleRepository.delete("id_famille = ?1", id);
-            return Response.status(204).build();
+            String uriBase = uriInfo.getRequestUriBuilder().build().toString();
+            HateOas hateOas = new HateOas();
+            hateOas.addLink("all", uriBase.replace("/" + id, ""));
+            hateOas.addLink("self", uriBase);
+            return Response.ok(hateOas).build();
         }
         return Response.status(Response.Status.BAD_REQUEST).build();
     }
